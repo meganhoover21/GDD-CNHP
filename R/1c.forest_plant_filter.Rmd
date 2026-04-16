@@ -114,7 +114,7 @@ If you already have the CSV files above, skip this step and move onto the next:
     #grepl("\\bAchnatherum lettermanii\\b", Species) ~ "ACLE9",
      #grepl("\\Erigeron speciosus\\b", Species) ~ " ERSP4",
     #TRUE ~ NA_character_)) %>%
- # filter(!is.na(Species)) #TRUE ~ NA_character_ → everything not matching becomes NA. filter(!is.na(Species)) → removes those rows
+ # filter(is.na!(Species)) #TRUE ~ NA_character_ → everything not matching becomes NA. filter(!is.na(Species)) → removes those rows
 #NA_character_ is important because Species is a character column
 
 #only select relevent columns % filter out NAs in the eventDate

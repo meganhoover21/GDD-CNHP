@@ -25,7 +25,16 @@ library(plotly)
 setwd("C:/Users/samho/Desktop/CNHP/Growing_Degree_days/GDD_CNHP")
 #Load prism climate data csv files
 m1<- read_csv("raw_data/PRISM_ppt_tmean_monthly_199101_200501.csv")
-m2<- read_csv("raw_data/PRISM_ppt_tmean_monthly200502_202001.csv")
+m1 <- m1 %>%
+  rename(tmean_F = `tmean_ F`)
+m2<- read_csv(
+  "raw_data/PRISM_ppt_tmean_monthly200502_202001.csv")
+m2 <- m2 %>% filter(!is.na("tmean_F")) %>% 
+  filter(!is.na(ppt_in))
+m1 <- m1 %>% filter(!is.na("tmean_F")) %>% 
+  filter(!is.na(ppt_in))
+
+dat<-bind_rows(m1,m2)
 
 
 ```
