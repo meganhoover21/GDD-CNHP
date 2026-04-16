@@ -1,0 +1,75 @@
+id,collectionCode,Species,eventDate,verbatimEventDate,has_abundance,habitat,verbatimAttributes,decimalLatitude,decimalLongitude,stateProvince
+199381,UTC,ACLE9,1956-07-11,NA,TRUE,Frequent in moist soil of meadow,NA,43.7558333,-110.9333333,Wyoming
+217732,UTC,ACLE9,1978-08-26,NA,TRUE,Common in open meadow  Agropyron trachycaulum-Artemisia tridentata type,NA,42.4986111,-110.6930556,Wyoming
+4584892,NA,ACLE9,2013-08-14,NA,TRUE,"Gravelly moraine, dry meadow and willow edge.","Paniculate. One floret/spikelet. Lemma awned. Glumes subequal. Lemmas v. short, hairy, awns ~15mm. Palea ~ 3/4 lemma length. Very common.",38.9562,-106.9903,Colorado
+13803122,V,ACLE9,1987-08-07,07 August 1987,TRUE,Locally common on dry open slope.,NA,40.4192744,-105.8103441,Colorado
+13803123,V,ACLE9,1987-06-28,28 June 1987,TRUE,"Uinta Mtn Group Fm. On sandy soil of gentle slope along ridge, S exposure with scattered Pinus ponderosa and Cercocarpus ledifolius. Locally common.",NA,40.627189,-108.8587873,Colorado
+13803133,V,ACLE9,1982-06-29,29 June 1982,TRUE,"Common on loam of SE facing slope with Poa, Artemisia and Quercus.",NA,39.8692008,-108.0570108,Colorado
+25147249,NA,ACLE9,1991-08-24,24 Aug 1991,TRUE,NA,abundance=frequent;,39.794426,-107.417556,Colorado
+31102471,NA,ACLE9,2012-07-31,7/31/2012,TRUE,"Sage habitat - in openings below aspen and spruce-fir stands on N-side (high side) of trail. Red soil, rocky/gravelly. Transect 2 (50m), continuing from end of Transect 1, through a talus slope, rocky area. Big Sage and other shrubs, just below aspen encroaching down hill (many small trees < 3m tall). Vegetation low, not much in bloom, much bare ground. Associated species on and off transect: Big Sage, aspen, Rosa woodsii, Amelanchier alnifolia, Heterotheca villosa (flowering), Ipomospis aggregata (fl), Festuca (large), Ligusticum porteri, Thalictrum fendleri, Helianthella quiquenervis, Potentilla (pulcherrima?), Achillea, Campanula rotundifolia, Lathyrus, Eriogonum umbellatum, Arenaria congesta, Elymus sp?, Agrostis sp?, Antennaria sp?, Mahonia repens, Linum lewisii, Senecio sp?, Arabis drummondii, Castelleja (red), Heliomeris, Agoseris auriantica, Arctostaphyllos uva-ursi.Additional plants found in rocky areas in Transect 2: Chamerion angustifolium, Rubus, Pneumonanthe parryi, Juniperus communis, Galium (borealis?), Castilleja (orange), Polygonum douglasii.","Leaves narrow and tightly involute. Ligule short, throat not hairy. Spikelets with a single, awned floret. Florets (lemmas) laterally compressed with short hairs. Awns twisted, 1-2 cm long, with very short, upward-pointing hairs. Glumes subequal and > lemma. Palea about 3/4 length of lemma. In fruit Common.",38.96604,-106.9708,Colorado
+523573,NA,HEMU3,2003-08-10,10 August 2003,TRUE,Common in rocky soil of disturbed site by old mine.,NA,40.11,-105.41,Colorado
+524859,NA,HEMU3,2000-09-02,2 September 2000,TRUE,abundant in open meadow,NA,38.96,-105.04,Colorado
+3382980,NA,HEMU3,2012-07-31,NA,TRUE,"Sage habitat - in openings below aspen and spruce-fir stands on N-side (high side) of trail. Red soil, rocky/gravelly. Transect 1 (50m), NW corner of meadow above road starting where meadow opens out of spruce trees.",Very common in dry meadows and roadsides. Full bloom.,38.96528,-106.97105,Colorado
+3382996,NA,HEMU3,2012-08-17,NA,TRUE,Openings along willow margin. Slightly higher ground surrounded by Salix dominated wetland.,"Very common. Full bloom. Plants multi-stemmed, tall (3-5dm), and wiry with linear-elliptic, opposite leaves. Stems reddish. Flowers with several bright yellow rays. Extremely common in bloom all over East River valley.",38.95633,-106.9823,Colorado
+6814995,NA,HEMU3,2014-06-30,NA,TRUE,"Highly disturbed, bare shale soil area of flow and smaller slump islands and aspen stands along edge of flow. In permanent plot #4.","Stems purple, Leaves opposite; lanceolate and very acute-tipped. Very common. Not yet in bud or bloom.",38.935998,-106.958582,Colorado
+13857027,V,HEMU3,1982-07-15,15 July 1982,TRUE,Common perennial on shale of slope with Quercus and Prunus.,NA,39.7028707,-108.5694186,Colorado
+13857035,V,HEMU3,1947-08-29,29 August 1947,TRUE,"Abundant in clearings, mixed aspen-fir forest.",NA,38.4266528,-108.4223209,Colorado
+13857090,V,HEMU3,1964-08-15,15 August 1964,TRUE,"Grassland with Feth, Feid, Heho (sic); abundant; 10% slope; SE exposure; loam soil.",NA,39.8482176,-107.5813398,Colorado
+13857091,V,HEMU3,1955-08-16,16 August 1955,TRUE,Meadow; abundant everywhere in the White River Valley.,NA,39.8545586,-107.4314057,Colorado
+17622210,NA,HEMU3,1976-08-26,1976-8-26,TRUE,rocky slopes,rays yellow; common perennial,40.751376,-106.624949,Colorado
+27189265,NA,HEMU3,1994-07-22,22 July 1994,TRUE,"Common, erect herb on silty soil laong a disturbed roadside of slope.",NA,40.31,-106.43,Colorado
+32685460,Herb,HEMU3,1989-08-16,16-Aug-89,TRUE,East facing slope in open grassy meadow,Common name: Showy goldeneye.,39.586426,-105.250474,Colorado
+3027228,NA,HEMU3,2010-08-04,NA,TRUE,Dry meadows throughout Gothic and East River Valley.,The most common and widespread yellow composite in area. Leaves are dark green-purple on wiry stems. Plant are apparent all summer. Just beginning to bloom over past week. Extremely common.,38.95633,-106.99018,Colorado
+3413372,UTC,HEMU3,2010-08-04,NA,TRUE,Dry meadows throughout Gothic and East River Valley.,The most common and widespread yellow composite in area. Leaves are dark green-purple on wiry stems. Plants are apparent all summer. Extremely common. Just beginning to bloom over past week,38.95633,-106.99018,Colorado
+13868285,V,HEMU3,1934-07-09,09 July 1934,TRUE,Common in open ground at middle altitudes in the valley. This specimen from roadside.,NA,37.4069138,-105.0726572,Colorado
+13868288,V,HEMU3,1980-08-09,9 August 1980,TRUE,With Aster engelmannii; very common in the aspen forest.,NA,40.75485,-106.58787,Colorado
+22479318,NA,HEMU3,1999-08-16,1999-8-16,TRUE,"Pinyon-juniper woodland with clearings dominated by shortgrass prairie. Upper slopes of cone with abundant, exposed granite.",NA,37.7775,-105.0194,Colorado
+33280017,NA,HEMU3,2024-09-11,NA,TRUE,Open floodplain forest.,"Abundant and erect, yellow, flowering perennial herb.",37.3661,-107.866,Colorado
+13868319,V,HEMU3,1924-09-12,12 September 1924,TRUE,Very abundant in open between yellow pines on south-facing slope.,NA,37.193936,-107.3152587,Colorado
+13868329,V,HEMU3,1978-08-16,16 August 1978,TRUE,Clay loam; disturbed soil along dirt road; frequent; slope 0-15%; level ot north facing slope; with Salsola; Gutierrezia; Atriplex.,NA,37.3545811,-108.92657320000001,Colorado
+517711,NA,PEWH,1999-07-17,17 July 1999,TRUE,Frequent in subalpine meadow.,NA,39.63,-105.76,Colorado
+523409,NA,PEWH,2003-07-19,19 July 2003,TRUE,Common in rocky soil of meadow with gentle slope.,NA,39.87,-105.6,Colorado
+524761,NA,PEWH,2004-07-04,4 July 2004,TRUE,Common in rocky soil of alpine tundra.,NA,39.85,-105.67,Colorado
+524967,NA,PEWH,2004-07-18,18 July 2004,TRUE,Common in rocky soil in pine forest.,NA,40.92,-106.11,Colorado
+525284,NA,PEWH,2004-07-10,10 July 2004,TRUE,Common in shaded Pseudotsuga and pine forest.,NA,40.66,-105.89,Colorado
+527573,NA,PEWH,2004-07-16,16 July 2004,TRUE,Common under aspen.,NA,40.49,-105.9,Colorado
+3029371,NA,PEWH,2010-07-18,NA,TRUE,"Alpine- subalpine meadows and grasslands with much exposed scree and gravel on SW facing slopes. In dry, open sites Diverse alpine-subalpine herb and shrub community. Often associated with Ribes and other shrubs.","Petals blue-purple, fading to rust color. Full bloom. Common just below ridge.",39.01301,-106.9813,Colorado
+3031233,NA,PEWH,1960-07-28,NA,TRUE,Rocky slope near snowfield.,Near-white-flowered form; growing with more common purple-flowered form.,38.954444,-107.000088,Colorado
+3104688,NA,PEWH,2011-07-22,NA,TRUE,"Common species include Trifolium parryi, Polemonium viscosum, Androsace septentrionalis, Potentilla pulcherrima, Taraxacum officinale, Achillea millefolium, Elymus trachycaulus, Poa alpina, Achnatherum nelsonii, Carex ebenea, and Salix brachycarpa.",NA,37.75777778,-107.7138889,Colorado
+3109061,NA,PEWH,1967-07-26,NA,TRUE,Lower edge of alpine zone; rocky soil; common; corolla deep purple.,NA,37.737775,-107.698118,Colorado
+3126871,NA,PEWH,2011-08-07,NA,TRUE,"Rocks and scree below saddle, to lush, rocky meadows in central basin. Throughout meadows down to lower basin. Meadows very lush and diverse.",Full bloom. Common,38.97906,-106.93186,Colorado
+3816074,NA,PEWH,1974-08-08,NA,TRUE,Abundant on shallow peat,Perennial; corolla burgandy,40.624137,-105.690115,Colorado
+4103857,Vascular Plants,PEWH,2004-07-21,7/21/2004,TRUE,NA,Locally abundant. Flowers purple.,39.647,-105.586,Colorado
+4103858,Vascular Plants,PEWH,2004-07-21,7/21/2004,TRUE,"Locally abundant, by roadside.",Flowers cream-white.,39.647,-105.586,Colorado
+5738447,Vascular Plants,PEWH,1993-08-11,1993-8-11,TRUE,Corollas mostly white with some purple. Locally abundant. Rocky/gravelly soil.,NA,39.987999,-105.5770035,Colorado
+5761914,NA,PEWH,2013-07-14,NA,TRUE,"Growing on steep hill side, failry abundant",NA,39.61861111,-105.6030556,Colorado
+13782409,V,PEWH,2009-07-15,15 July 2009,TRUE,"On gentle slope in dry Pinus flexilis - Picea engelmannii - Populous tremuloides forest with deadfall; associates include Juniperus communis, Orthilia secunda, Carex ssp., Chamerion danielsii; granitic substrate; common locally.",NA,38.8138,-104.99939,Colorado
+13782473,V,PEWH,1898-07-11,11 July 1898,TRUE,Common in open areas in bed of canon. Frequently forms extensive mats.,NA,37.4004,-108.06272,Colorado
+13782474,V,PEWH,1964-07-16,16 July 1964,TRUE,Roadside; common abundance; gravelly loam soil; 30% slope. Veg. type: timber.,NA,40.34615,-106.74007,Colorado
+13782512,V,PEWH,1975-08-07,7 August 1975,TRUE,Common on road cuts in spruce-fir forest.,NA,38.0947753,-105.6319118,Colorado
+13782518,V,PEWH,1964-07-06,6 July 1964,TRUE,"Roadside bank; gravelly loam soil; south exposure, 40% slope; common abundance; veg. type: timber; assoc. plants ES, AF.",NA,39.66086,-105.58436,Colorado
+13782523,V,PEWH,1934-06-20,20 June 1934,TRUE,Sunny meadows. Frequent at Blue Lake and at other places of similar altitude or higher.,NA,37.31751,-105.13818,Colorado
+13782537,V,PEWH,1964-07-06,6 July 1964,TRUE,"Roadside bank; gravelly loam soil; south exposure, 40% slope; common abundance; veg. type: timber; assoc. plants ES, AF.",NA,39.66086,-105.58436,Colorado
+15882213,NA,PEWH,2017-07-23,NA,TRUE,Site 2. Steep meadow slopes from upper boulder field to saddle. On boulder field and especially meadow slopes above.,Full bloom. Very common.,38.991084,-106.971292,Colorado
+20797876,NA,PEWH,2018-07-14,NA,TRUE,"Meadow below talus, with stands of willow and spruce bordering to west. Snow basin, now very dry.",Common.,39.012116,-106.942836,Colorado
+21263036,NA,PEWH,1983-07-31,NA,TRUE,abundant along roadside in gravelly soil on parking turnout,NA,41.3279,-106.47261,Wyoming
+21995539,GREE,PEWH,2013-07-21,7/21/13,TRUE,In the alpine.,Bell shape face down. Very abundant.;,39.488692,-106.2643697,Colorado
+21999765,GREE,PEWH,1965-06-28,6/28/65,TRUE,"High mountains, open meadows. Alpine.","Interesting color, most too common.",40.417733,-105.527158,Colorado
+22532652,NA,PEWH,1995-08-10,1995-8-10,TRUE,"Sugarloaf Recreation Area, along trail from Libby Lake to Medicine Bow Peak. Cool, boggy, subalpine areas with frequent and more or less permanent snowfields, abundant quartzite boulders; windswept fir and willows common. [Label reads T16N R79W SEC17 NW4 & SEC13 SW4 & SEC18 N2.]",NA,41.359963,-106.309969,Wyoming
+22698106,NA,PEWH,1995-08-10,1995-8-10,TRUE,"Cool, boggy, subalpine areas with frequent and more or less permanent snowfields, abundant quartzite boulders; windswept fir and willows common. [Label reads T16N R79W SEC17 NW4 & SEC13 SW4 & SEC18 N2]",NA,41.359963,-106.309969,Wyoming
+22728544,NA,PEWH,2013-07-21,2013-7-21,TRUE,Alpine meadow with abundant Salix patches. Scattered granite boulders. Soil sandy to gravelly.,NA,39.59333,-105.71326,Colorado
+23865283,NA,PEWH,2019-07-29,NA,TRUE,Subalpine meadow at base of grassy slope below saddle on ridge of Avery Peak.,Common. Population just beginning to bloom.,38.977096,-106.976723,Colorado
+23889037,NA,PEWH,2019-07-31,NA,TRUE,Rocky meadow surrounded by willows and Pentaphylloides shrubs. Near transect 2 in upper basin (UVB).,Common.,38.985389,-106.971445,Colorado
+23889849,NA,PEWH,2019-07-31,NA,TRUE,Meadow with many willow patches. Near transect 1 in upper basin (UVB).,Fairly common. Scattered.,38.984458,-106.970863,Colorado
+23889951,NA,PEWH,2019-07-31,NA,TRUE,Meadow with many willow patches. Near transect 1 in upper basin (UVB).,Fairly common. Scattered.,38.984458,-106.970863,Colorado
+24788867,NA,PEWH,2019-08-12,NA,TRUE,Shale slope on ridge and talus just below.,Fairly common.,38.984459,-106.968573,Colorado
+27186106,NA,PEWH,2009-07-17,17 July 2009,TRUE,"Common in moist meadow full of flowers, and along lake shore.",NA,40.4,-106.62,Colorado
+27190535,NA,PEWH,2007-07-21,21 July 2007,TRUE,Common in alpine tundra. In moist runnoff next to road.,NA,39.38,-106.09,Colorado
+27198523,NA,PEWH,2007-07-07,7 July 2007,TRUE,"Common in moist, shaded area under conifers.",NA,38.89,-107.71,Colorado
+27212029,NA,PEWH,2015-08-08,8 August 2015,TRUE,Common on rocky outcropping in alpine tundra.,NA,39.13,-106.18,Colorado
+27862343,RSA,PEWH,1898-07-11,"July 11, 1898",TRUE,Common in open areas in bed of canon.,Frequently forms extensive mats.,37.388423,-108.074674,Colorado
+28163573,NA,PEWH,2021-07-24,NA,TRUE,Meadow and talus.,Fairly common.,38.971297,-106.942625,Colorado
+29949646,Vascular Plants,PEWH,2022-07-06,7/6/22,TRUE,"Transition zone between the alpine and subalpine, west facing rocky slope with abundant herbs.",NA,37.4471,-108.00658,Colorado
+30086052,NA,PEWH,2021-07-02,02 July 2021,TRUE,Common herb to 0.35 m amongst large rocks near the ridgeline in alpine.,NA,37.382778,-108.045,Colorado
+31957311,NA,PEWH,2013-07-17,7/17/2013,TRUE,NA,Scattered to locally abundant. Corolla brownish purple to nearly white.,38.67859,-106.50413,Colorado
+32686157,Herb,PEWH,1987-07-21,21-Jul-87,TRUE,"Moist, shady area",Flowers white or deep purple. Common name: Whipple's penstemon.,40.028477,-105.223139,Colorado

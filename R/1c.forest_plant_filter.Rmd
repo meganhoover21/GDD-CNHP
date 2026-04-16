@@ -1,0 +1,499 @@
+---
+title: "CNHP: GDD Species Point Filter on US Forest Service Land"
+author: "Megan Hoover"
+date: "2026-04-09"
+output: html_document
+---
+Purpose: Filtering the CNHP and Seinet plant species data to only points that are found on US Forest Land and within 1 mile of a US Forest Service road. We did not filter the data to be within 1 mile of US Forest service road for the CNHP data, because it was pre-determined to already be within acceptable range when it was collected.
+<br>
+This data is used to filter the data coordinates that can be used to download PRISM climate data for the GDD model.
+
+There are several options for this code: The #code should be used if new data needs to be re-run, following the same filter parameters or if the user doesn't have the csv files used in this rmarkdown.
+
+
+**Use this code chunk if you want to see the map at the bottom**
+If trying to save space and you just want to see the code, run the code chunk below this one instead.
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+<br>
+
+**Run to only see the code**
+```{r } 
+# {r setup, include=FALSE }
+#knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = #FALSE, eval = FALSE) 
+
+## If eval=FALSE R code within all subsequent chunks will not be evaluated or run. Making False will save space and runtime
+
+#when running on your own laptop, remove the eval = FALSE to have the map show up in html
+```
+<br>
+
+Load Libraries:
+```{r, results='hide', message=FALSE, warning=FALSE}
+#source("geospatial_lesson/setup.R")
+library(sf)
+library(dplyr)
+library(tidyverse)
+library(lubridate)
+library(tmap)
+library(tigris)
+```
+<br>
+
+# Step 1: Load csv and shape files to filter
+
+**Load the 4 seinet plant species data ranging from WY, CO, NE, SD (4_species_clean.csv):**
+  1. Heliomeris multiflora- "HEMU3"
+  2. Penstemon whippleanus- "PEWH"
+  3. Achnatherum lettermanii- "ACLE9"
+  4. Erigeron speciosus- "ERSP4"
+  <br>
+**We'll also load 2023, 2024, and 2025 CNHP species data (clean_data/all_years.csv):**
+  1. Penstemon whippleanus- "PEWH
+  2. Erigeron speciosus- "ERSP4"
+  3. Achnatherum lettermanii- "ACLE9"
+  4. Andropogon gerardii- "ANGE"
+  5. Helianthus pumilus- "HEPU3"
+  6. Heliomeris multiflora- "HEMU3"
+  7. Nassella viridula- "NAVl4"
+  8. Pose secunda- "POSE"
+  <br>
+  **And the US Forest Service land spatial file for CO, WY, NE, SD, KS: ("raw_data/Forest Units Export/ForestUnitsExports.shp")**
+  <br>
+ 
+If you already have the CSV files above, skip this step and move onto the next:
+
+```{r, results='hide', message=FALSE, warning=FALSE}
+#load data
+#a<-read_csv("raw_data/plant_species/ach.lett_occurrences.csv")
+#h<-read_csv("raw_data/plant_species/Hel.mu_occurrences.csv")
+#p<-read_csv("raw_data/plant_species/penst.whip_occurrences.csv")
+#e<-read_csv("raw_data/plant_species/eri.spe_occurrences_usfs.csv")
+
+#a$locationRemarks <- as.character(a$locationRemarks)
+#h$locationRemarks <- as.character(h$locationRemarks)
+#p$locationRemarks <- as.character(p$locationRemarks)
+#names(e) <- names(p) #want the col names in e to match p
+#e$locationRemarks <- as.character(e$locationRemarks)
+  
+#uses diff column name 
+#bind the 4 df (stack)
+
+#loop for changing new e df str to p:
+#for (col in names(p)) {
+ # target_class <- class(p[[col]])[1]
+  
+  #if (target_class == "POSIXct") {
+   #  e[[col]] <- as.POSIXct(e[[col]], format = "%m/%d/%Y %H:%M:%S")
+  # } else if (target_class == "Date") {
+    # e[[col]] <- as.Date(e[[col]])
+   #} else {
+   #  e[[col]] <- as(e[[col]], target_class)
+  # }}
+ #s4<-bind_rows(a,h,p,e) #new
+
+#write_csv(s4, "raw_data/4_species.csv")
+#s4<-read_csv("raw_data/4_species.csv")
+
+ #s4 <- s4 %>%
+ # mutate(has_abundance = if_any(
+  #  c(contains("habitat"), contains("verbatimAttributes"), contains("occurrenceRemarks")),  # select your columns
+   # ~ grepl("\\b(abundant|common|frequent)\\b", ., ignore.case = TRUE))) %>%
+  #filter(has_abundance)
+
+ #s4<- s4 %>%
+ # rename(Species=scientificName) 
+
+#change species name to a code.some species rows have several species names
+ #s4 <- s4 %>%
+  #mutate(
+  #  Species = case_when( #grepl() searches for text within the string.\\b = word boundary
+    #grepl("\\bHeliomeris multiflora\\b", Species) ~ "HEMU3",
+    # grepl("\\bPenstemon whippleanus\\b", Species) ~ "PEWH",
+    #grepl("\\bAchnatherum lettermanii\\b", Species) ~ "ACLE9",
+     #grepl("\\Erigeron speciosus\\b", Species) ~ " ERSP4",
+    #TRUE ~ NA_character_)) %>%
+ # filter(!is.na(Species)) #TRUE ~ NA_character_ → everything not matching becomes NA. filter(!is.na(Species)) → removes those rows
+#NA_character_ is important because Species is a character column
+
+#only select relevent columns % filter out NAs in the eventDate
+ #s<- s4 %>%
+  #select(id, collectionCode, Species, eventDate,verbatimEventDate, has_abundance, habitat,verbatimAttributes,decimalLatitude, decimalLongitude, stateProvince) %>%
+  #filter(!is.na(eventDate))
+
+#save this df:
+#write_csv(s, "clean_data/4_species_clean.csv")
+```
+<br>
+
+
+**1.1 Load Species CSV files, forest sf, and roads sf (clean_data/filtered_frst_rds.shp):**
+```{r}
+s<-read_csv("clean_data/4_species_clean.csv")
+
+#2023-2025 cleaned data from CNHP data
+all<-read_csv("clean_data/all_years.csv")
+
+#filter to only locations where there hasn't been seed collection and change from several diff date formats to Date
+all <- all %>%
+  filter(Seeds_Collected== "no") %>%
+  mutate(
+    Date = parse_date_time(
+     Date,
+     orders = c("mdy HM", "Ymd")
+  ) %>% as.Date())
+ 
+# left join of all and s based on species and Date column.
+s<- s %>%
+  rename(Date= eventDate,
+       Latitude= decimalLatitude,
+      Longitude= decimalLongitude)
+
+a<-all %>%
+ select(Species, Date, Latitude, Longitude)
+
+s <- s %>%
+   select(Species, Date, Latitude, Longitude)
+
+#bind the rows (adding one df at the bottom of the other)
+#s_all <- bind_rows(a, s)
+#now we have all the species data for the project
+#write_csv(s_all, "clean_data/GDD_species.csv")
+#s_all<- read_csv("clean_data/GDD_species.csv")
+
+#load US Forest SF
+forest<-read_sf("raw_data/Forest Units Export/ForestUnitsExports.shp")
+
+# 4 states rd map filtered on US forest land based off forest layer
+road_all<-st_read("clean_data/filtered_frst_rds.shp")%>%
+  filter(!is.na(name)) %>%
+  filter(type %in% c("O", "LOCAL")) 
+
+#roads sf. We have the rds layer of 3 states below
+#roads<-read_sf("raw_data/Forest Service Roads Layer/fs_rds.shp")
+```
+<br>
+
+**Only use this if you don't have the csv file for CO, WY, and NE roads (clean_data/filtered_frst_rds.csv), because it takes up a lot of space. Pull in road data for WY, SD, and NE using tigris package**
+
+WY counties based on the map layer: Carbon, Natrona, Albany, Converse, Platte, Goshen, Niobrara
+
+<br>
+NE counties based on the map layer: Sioux, Box Butte, Sheridan, Dawes
+<br>
+
+SD counties based on the map layer: Lawrence, Pennington, Custer, and Fall River
+
+```{r}
+#options(tigris_use_cache = TRUE) #If you're doing this often, cache the downloads so they aren't redownloaded every run:
+
+#sf
+#wy_roads <- roads(state = "WY",
+  #county = c("Carbon", "Natrona", "Albany", "Converse", "Platte", "Goshen", "Niobrara"))
+
+#save the sf in csv
+#write_csv(wy_roads, "raw_data/WY_roads.csv")
+
+#ne_roads <- roads(state = "NE",
+ #county = c("Sioux", "Box Butte", "Sheridan", "Dawes"))
+#save the sf in csv
+#write_csv(ne_roads, "raw_data/ne_roads.csv")
+
+#added SD last minute
+#sd_roads <- roads(state = "SD",
+ #county = c("Lawrence", "Pennington", "Custer", "Fall River"))
+#save the sf in csv
+#write_csv(sd_roads, "raw_data/sd_roads.csv")
+
+
+#ne_sf<- write_sf(ne_roads, "ne_roads.shp")
+#wy_sf<- write_sf(wy_roads,"wy_roads.shp")
+#sd_sf<- write_sf(sd_roads,"raw_data/sd_roads.shp")
+#ne_roads<-st_read("raw_data/ne_roads.shp")
+#wy_roads<- st_read("raw_data/WY_roads.shp")
+#sd_roads<- st_read("raw_data/sd_roads.shp")
+
+```
+# Step 2: Transform data and filter for spatial analysis
+
+**2.1 Now we want to transform the species into a spatial object and see where the points overlay on the US forest map**
+```{r}
+#transform the s object only, to filter on and not the all object (CNHP data).
+s_filter <- s %>%
+  #rename(Longitude=decimalLongitude,
+         #Latitude=decimalLatitude) %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+
+# match CRS
+forest <- st_transform(forest, st_crs(s_filter))
+roads  <- st_transform(road_all, st_crs(forest))
+
+#run this if issue: want only true values
+st_is_valid(forest)
+forest <- st_make_valid(forest)
+st_is_valid(forest) #shows only true now
+
+# filter plant points to forest. Don't need to for a_sf b/c pre-determined that all species found already there.
+s_filter <- st_filter(s_filter, forest)
+
+# project to meters for distance
+s_proj  <- st_transform(s_filter, 5070)
+rds_proj <- st_transform(road_all, 5070)
+
+# 1 mile buffer logic
+matches <- st_is_within_distance(s_proj, rds_proj, dist = 1609.34)
+
+s_filter <- s_proj[lengths(matches) > 0, ] %>%
+  st_transform(4326)
+
+#This is only if seinet and CNHP data are combined at the beginning. We didn't do that
+#sall_sf<- s_all %>%
+ # st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+
+# transform s_sf (seinet data)
+s_sf<- s %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+#all_sf (just the cnhp)
+a_sf<- all %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+
+#match forest and sall_sf crs, also want roads to match, only if have s_all df
+#forest <- st_transform(forest, st_crs(a_sf))
+#roads<- st_transform(road_all, st_crs(forest))
+
+#match forest and s_sf crs, also want roads to match
+forest <- st_transform(forest, st_crs(s_sf))
+roads<- st_transform(road_all, st_crs(forest))
+#wy_roads<- st_transform(wy_roads, st_crs(forest))
+#ne_roads <- st_transform(ne_roads, st_crs(forest))
+
+#check that they match
+st_crs(forest) == st_crs(road_all) #they do!
+
+#run this if issue: want only true values
+st_is_valid(forest)
+forest <- st_make_valid(forest)
+st_is_valid(forest) #shows only true now
+
+#filtering plant points on US forest only if sall_sf object
+#plants_forest <- st_filter(sall_sf, forest) 
+
+#filtering plant points of s_sf on US forest
+plants_forest <- st_filter(s_sf, forest) 
+```
+<br>
+
+**2.2: Use the shape file for the 4 states of CO, NE, WY, and SD (raw_data/states.shp)**
+
+If you don't have the shp file, use the marked out code.
+```{r}
+# download county shapefile for the state of Colorado, NE, WY, SD with tigris package. cb gives general boundary files
+#states <- states(cb = TRUE) %>% # cb = TRUE gives smaller,
+#filter(STUSPS %in% c("CO", "WY", "NE", "SD", "KS")) #%in% means any of these.
+#write_sf(states, "raw_data/states.shp")
+states<-st_read("raw_data/states.shp")
+
+
+#just to check where species are
+
+#tmap_mode("view")  # for interactive map
+
+ #tm_shape(states)+
+  #tm_polygons(col="grey")+
+#tm_shape(forest)+
+ #tm_polygons(col= "darkgreen",alpha= .3, border.col = "green", lwd = 1, legend.show = TRUE) +
+ # tm_shape(roads)+
+ #tm_lines(col= "black", legend.show = TRUE)+
+#tm_shape(plants_forest)+
+ # tm_dots(col = "Species",
+         # size = 0.5,
+         # alpha = 1.0,
+         # popup.vars = c("Species", "Date"))
+#
+```
+<br>
+
+**2.3: Further sf transformation to meet the roads filter for the seinet data.**
+
+We now have plants_forest df (seinet data) that only has points that fall on US Forest  Serviceland in CO, WY, SD, and NE. We want to filter to only show points within 1 mile from roads. Use the road_all sf or follow the marked out code if you didn't have the filtered_frst_rds.csv from the beginning. 
+<br>
+
+If using WGS84 (EPSG:4326), distances are in degrees, which is tricky.
+
+<br>
+
+Recommended: project to a metric CRS (meters).
+We want to combine the roads into one df first, but need to make sure they have some matching columns.
+```{r}
+#some duplicate names in roads. want to rename them automatically
+#names(roads) <- make.names(names(roads), unique = TRUE)
+
+#roads<- roads %>%
+#transmute( #mutate() + select() combined.
+   #name = NAME,
+  #  type = FUNCLASS,
+   # source = "Forest Service",
+   # geometry = geometry)
+
+#wy_roads <- wy_roads %>%
+  #transmute(
+   #name = FULLNAME,
+   #type = RTTYP,
+  # source = "TIGER",
+   #geometry = geometry)
+
+#ne_roads <- ne_roads %>%
+ #transmute(
+  #  name = FULLNAME,
+  # type = RTTYP,
+  #source = "TIGER",
+  # geometry = geometry)
+
+#sd_roads <- sd_roads %>%
+ #transmute(
+  #  name = FULLNAME,
+  # type = RTTYP,
+  #source = "TIGER",
+ # geometry = geometry)
+
+#make sure all have same CRS
+#ne_roads <- st_transform(ne_roads, 4326)
+#wy_roads <- st_transform(wy_roads, 4326)
+#sd_roads <- st_transform(sd_roads, 4326)
+#roads    <- st_transform(roads, 4326)
+
+#roads_all <- bind_rows(ne_roads, wy_roads,sd_roads,roads)
+
+#filtering roads on us forest land
+#roads_all<- st_filter(roads_all, forest)
+
+#write csv and sf has ne,wy, sd, and CO us forest roads
+#write_csv(roads_all, "clean_data/filtered_frst_rds.csv")
+#write_sf(roads_all, "clean_data/filtered_frst_rds.shp")
+#roads_all<- read_csv("clean_data/filtered_frst_rds.csv")
+#road_all<-st_read("clean_data/filtered_frst_rds.shp")%>%
+ # filter(!is.na(name)) %>%
+ # filter(type %in% c("O", "LOCAL"))
+
+#Filter points within 1 mile of roads
+# Project to metric (meters)
+pf_proj <- st_transform(plants_forest, 5070)   # US Albers Equal Area
+rds_proj  <- st_transform(road_all, 5070)
+
+# Define 1 mile in meters
+mi_meter <- 1609.34
+
+# Keep points within 1 mile of any road for seinet data
+# Returns a list of integer vectors (indices of roads within distance)
+matches <- st_is_within_distance(pf_proj, rds_proj, dist = mi_meter)
+
+# Keep only points that have at least one road within 1 mile
+pf_rds <- pf_proj[lengths(matches) > 0, ]
+
+#transform back to long and lat
+pf_rds1 <- st_transform(pf_rds, 4326)
+a_sf<- st_transform (a_sf, 4326)
+
+#the filtered s df and the all data frame combined
+pf_rds2 <- bind_rows(a_sf, pf_rds1)
+#just the unfiltered roads s_sf aka plants_forest and the unfiltered CNHP data.
+#pf_rds2 <- bind_rows(a_sf, plants_forest)
+
+
+#save the df
+#write_csv(pf_rds2, "clean_data/sp_froads_filter2.csv")
+#write_sf(pf_rds2, "clean_data/sp_froads_filter2.shp")
+
+# if you want totransform back to a normal df. We dont!
+#pf_rds1 <- pf_rds1 %>%
+  #st_drop_geometry()
+```
+<br>
+
+# Step 3. Map the data and save the sf
+
+**3.1 Verify with a map: Make sure all layers are in lat/long (EPSG:4326)**
+```{r,map, cache=TRUE, echo=TRUE}
+forest <- st_transform(forest, 4326)
+roads  <- st_transform(road_all, 4326)
+
+#already in 4326 pf_rds1 and pf_rd2
+
+tmap_mode("view")  # for interactive map and static for non-interactive
+
+#tm<-
+  tm_shape(states)+
+  tm_polygons(col="grey")+
+tm_shape(forest)+
+  tm_polygons(col= "darkgreen",alpha= .3, border.col = "green", lwd = 1, legend.show = TRUE) +
+  tm_shape(roads)+
+  tm_lines(col= "black", alpha= .6, legend.show = TRUE, lwd =.4)+
+tm_shape(pf_rds2)+
+  tm_dots(col = "Species",
+          size = 0.5,
+          alpha = 1.0,
+          popup.vars = c("Species", "Date"))
+
+  #tm_layout(legend.outside = TRUE)
+  
+ # print(tm)
+```
+<br>
+
+This is a map of locations for the various species of interests, intended for the seed collection project at CNHP. They are within US Forest Service lands in CO, WY, SD and NE, and are within a mile of a road for easy collection.
+<br>
+
+**Cool, we now have the data and a map to prove it's right! If we want to add coordinates to see where the locations are when clicked on, add the code chunk below.** 
+```{r}
+#coords <- st_coordinates(pf_rds1)
+
+#pf_rds1$long <- coords[,1]
+#pf_rds1$lat <- coords[,2]
+
+#this gets add to the bottom of the map code
+#tm_shape(pf_rds1) +
+ # tm_dots(
+    #col = "Species",
+   # size = 0.5,
+    #popup.vars = c("Species", "Date", "long", "lat"))
+```
+<br>
+
+**3.1 Code chunk for getting data to use in PRISM application**
+
+If you already have the csv file for it (clean_data/sp_coordinates2.csv), you can skip this step!
+```{r}
+#this is for the pf_rds1 df, to split geometry column into lat and long
+#df <- st_read("clean_data/sp_froads_filter2.shp")
+
+# Make sure it's lat/long
+#df <- st_transform(df, 4326)
+
+#coords <- st_coordinates(df)
+
+#df$lon <- coords[,1]
+#df$lat <- coords[,2]
+
+#drop geometry
+#df <- st_drop_geometry(df)
+
+
+#write_csv(df, "clean_data/prism_coordinates2.csv")
+
+#export without column names for prism after making a df
+#coords<-df %>% as.data.frame
+# Reorder so latitude comes first
+#coords <- coords[, c("lat", "lon","Species","Date")]  %>%
+ # select(-"Date")
+
+
+#write_csv(coords,
+          #"clean_data/sp_coordinates2.csv",
+         # col_names = FALSE)
+
+
+prism<-read_csv("clean_data/sp_coordinates2.csv")
+```
+
+

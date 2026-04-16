@@ -1,0 +1,38 @@
+---
+title: "30 Year Climate Trends"
+author: "Megan Hoover"
+format: html
+editor: visual
+---
+
+# 30 Year Climate Trends in CO, NE, SD, and WY <br>
+Organization: CNHP
+Affiliates: Megan Hoover, Andrew Zimbelman, Chippy Marx
+
+We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. 
+
+```{r}
+#| include: false #prevents code and output from showing
+library(sf)
+library(tidyverse)
+library(ggplot2)
+library(leaflet)
+library(plotly)
+```
+ 
+```{r}
+#| include: false
+setwd("C:/Users/samho/Desktop/CNHP/Growing_Degree_days/GDD_CNHP")
+#Load prism climate data csv files
+m1<- read_csv("raw_data/PRISM_ppt_tmean_monthly_199101_200501.csv")
+m2<- read_csv("raw_data/PRISM_ppt_tmean_monthly200502_202001.csv")
+
+
+```
+ 
+
+
+
+
+
+The `echo: false` option disables the printing of code (only output is displayed).

@@ -1,0 +1,212 @@
+---
+title: "CNHP Data Cleaning"
+author: "Andrew Zimbelman"
+date: "2026-02-09"
+output: html_document
+---
+
+Load libraries at the top:
+```{r}
+library(flextable)
+library(tidyverse) #contains dplyr, readr, tibble
+library(dplyr)
+library(tibble)
+```
+
+
+Set Working Directory:
+```{r}
+#set wd to name of your project folder. Fill in your info
+#megan
+setwd("C:/Users/samho/Desktop/CNHP/Growing_degree_days")
+
+```
+Reading in the files on chippy's computer 
+```{r}
+Year_23 <- read_csv("../raw_data/2023_Collection_Pre_Analysis.csv")
+Year_23_Collection <- read_csv("../raw_data/2023_Pre_Collection_Pre_Analysis.csv")
+Pre_Small_24 <- read_csv("../raw_data/2024_Pre_Collection_Small.csv")
+Pre_Large_24 <- read_csv("../raw_data/2024 Pre Collection Survey Data RESULTS (1).csv")
+Post_Collection_24 <- read_csv("../raw_data/2024 Collection Survey Data RESULTS (1).csv")
+Pre_25 <- read_csv("../raw_data/2025 Pre-collection Form 11.7.2025 export (1).csv")
+Post_25 <- read_csv("../raw_data/2025 Collection Form 12.3.2025 export (2).csv")
+Species_25 <- read_csv("../raw_data/2025 Collection Form 12.3.2025 export copy.csv")
+```
+
+
+### Reading in Data 
+```{r}
+
+#not pre collection
+
+
+library(readr)
+#This data is the collection_data
+Year_23 <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2023_Collection_Pre_Analysis.csv")
+
+#This data is the pre collection data 
+Year_23_Collection <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2023_Pre_Collection_Pre_Analysis.csv")
+
+#This data is the pre collection excel data containing x & y coordinates 
+Pre_Small_24 <- read_csv("C:/Users/azout/Downloads/2024_Pre_Collection_Small.csv")
+
+#This is the Pre collection data for 2024
+Pre_Large_24 <- read_csv("C:/Users/azout/OneDrive/desktop/Spring 2026/ESS 440/Project Work/Excels/2024 Pre Collection Survey Data RESULTS (1).csv")
+
+#This is the collection data for 2024 
+Post_Collection_24 <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2024 Collection Survey Data RESULTS (1).csv")
+
+#This is the Pre collection data for 2025 
+Pre_25 <- read_csv("C:/Users/azout/Downloads/2025 Pre-collection Form 11.7.2025 export (1).csv")
+
+#This information is based on the seed recollection data
+Pre_25_seeds <- read_csv("C:/Users/azout/Downloads/2025 Pre-collection Form Seed Information 11.7.2025 export (4).csv")
+
+#This is the pre collection data for 2025 
+Post_25 <- read_csv("C:/Users/azout/Downloads/2025 Collection Form 12.3.2025 export (2).csv")
+
+#This data contains species information for 2025 
+
+
+Year_23 <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2023_Collection_Pre_Analysis.csv")
+
+#for Meg's laptop
+Year_23 <- read_csv("raw_data/2023_Collection_Pre_Analysis.csv")
+
+Year_23_Collection <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2023_Pre_Collection_Pre_Analysis.csv")
+
+#for Meg's laptop
+#Year_23_Collection <- #read_csv("raw_data/2023_Pre_Collection_Pre_Analysis.csv")
+
+Pre_Small_24 <- read_csv("C:/Users/azout/Downloads/2024_Pre_Collection_Small.csv")
+
+#for Meg's laptop
+#Pre_Small_24 <- read_csv("raw_data/2024_Pre_Collection_Small.csv")
+
+Pre_Large_24 <- read_csv("C:/Users/azout/OneDrive/desktop/Spring 2026/ESS 440/Project Work/Excels/2024 Pre Collection Survey Data RESULTS (1).csv")
+
+#for Meg's laptop
+#Pre_Large_24 <- read_csv("raw_data/2024 Pre Collection Survey Data RESULTS (1).csv")
+
+Post_Collection_24 <- read_csv("C:/Users/azout/OneDrive/Desktop/Spring 2026/ESS 440/Project Work/Excels/2024 Collection Survey Data RESULTS (1).csv")
+
+#for Meg's laptop
+#Post_Collection_24 <- read_csv("raw_data/2024 Collection Survey Data RESULTS (1).csv")
+
+Pre_25 <- read_csv("C:/Users/azout/Downloads/2025 Pre-collection Form 11.7.2025 export (1).csv")
+
+#for Meg's laptop 
+#Pre_25 <- read_csv("raw_data/2025 Pre-collection Form 11.7.2025 export (1).csv")
+
+Post_25 <- read_csv("C:/Users/azout/Downloads/2025 Collection Form 12.3.2025 export (2).csv")
+
+#for Meg's laptop
+#Post_25 <- read_csv("raw_data/2025 Collection Form 12.3.2025 export (2).csv")
+
+
+Species_25 <- read_csv("C:/Users/azout/Downloads/2025 Collection Form 12.3.2025 export copy.csv")
+
+#Seed Recollecton Data for group 
+#Pre_25_seeds <- read_csv(raw_data/2025 Pre-collection Form Seed Information 11.7.2025 export (4).csv)
+
+#for Meg's laptop
+#Species_25 <- read_csv("raw_data/2025 Collection Form 12.3.2025 export copy.csv")
+
+```
+
+## 23 Cleaning 
+```{r}
+#if there wasn't a collection some columns are blank.
+year_23 <- Year_23 |>
+  full_join(Year_23_Collection, by = c("GlobalID" = "ParentGlobalID")) |>
+  select('Ecoregion', 'Provisional Seed Zone', 'GlobalID', 'Date', 'Latitude', 'Longitude', 'Elevation', 'Unit', 'Seeds_Collected', 'GPS Datum' ,'Species...1', 'Approximate Number of Individual Plants Present and Accessible','Recollection',) |>
+  rename("Species" = 'Species...1') |>
+  rename("Population" = 'Approximate Number of Individual Plants Present and Accessible')|>
+  rename("PSZ" = 'Provisional Seed Zone') |>
+  filter(Species == "POSE" | Species == "PEWH" | Species == 'ERSP4'| Species == 'ACLE9'| Species == 'ANGE'| Species == 'HEPU3'| Species == 'NAVI4'| Species == 'POSE') |>
+  filter(Ecoregion == "NG" | Ecoregion == "SR" | Ecoregion == "HP")|>
+   unite('Species_Ecoregion', Species, Ecoregion) |>
+  filter(Species_Ecoregion == "POSE_SR" | Species_Ecoregion == "ANGE_HP" | Species_Ecoregion == "NAVI4_NG" ) |> 
+  separate(Species_Ecoregion, into = c("Species", "Ecoregion"), sep= "_") |> 
+  group_by(Species) |>
+  arrange(-Population)|> 
+  slice_head(n=5) |>
+  ungroup()
+
+#create a csv of the cleaned data, so we don't have to run code each time
+#write_csv(year_23, "clean_data/year_23.csv")
+```
+
+
+## 24 Cleaning
+```{r}
+Pre_Collection_24 <- full_join(Pre_Large_24, Pre_Small_24, by = c("ParentGlobalID" = "GlobalID"))
+year_24 <- left_join(Post_Collection_24, Pre_Collection_24, by = "Primary Key") |>
+  select('Primary Key', 'Recollection', 'Ecoregion', 'Provisional Seed Zone', 'Percent of Population with Mature Seed','Percent of Population with Developing Seed','Approximate Number of Individual Plants Present and Accessible', 'Target Species', 'Are You Collecting Seeds on This Trip?', 'Elevation', 'Approximate Area of Population', 'Latitude', 'Longitude', 'GlobalID.x', 'DateYMD.x') %>%
+  rename("Species" = 'Target Species')|>
+  rename("Date" = 'DateYMD.x') |>
+  rename("GlobalID" = 'GlobalID.x') |> 
+  rename("Population" = 'Approximate Number of Individual Plants Present and Accessible') |>
+  filter(Ecoregion == "MR" | Ecoregion == "SR" | Ecoregion == "HP" | Ecoregion == "NG") |>
+  filter(Species == "POSE" | Species == "PEWH" | Species == 'ERSP4'| Species == 'ACLE9'| Species == 'ANGE'| Species == 'HEPU3'| Species == 'NAVI4'| Species == 'POSE') |> 
+  unite('Species_Ecoregion', Species, Ecoregion) |>
+  filter( Species_Ecoregion == "ERSP4_MR" | Species_Ecoregion == "ACLE9_MR" | Species_Ecoregion == "ANGE_HP" | Species_Ecoregion == "HEPU3_SR"  | Species_Ecoregion ==  "POSE_SR" | Species_Ecoregion == "NAVI4_NG" | Species_Ecoregion == "ERSP4_MR") |>
+  rename("PSZ" = 'Provisional Seed Zone')|>
+  rename("Seeds_Collected" = 'Are You Collecting Seeds on This Trip?')|>
+  separate(Species_Ecoregion, into = c("Species", "Ecoregion"), sep= "_") |>
+  unite('Species_PSZ', Species, PSZ) |> 
+  filter(Species_PSZ != "ERSP4_1020SA" | Species_PSZ != "ERSP4_0150SA" | Species_PSZ != "ANGE_1020SA" | Species_PSZ != "ANGE_0150SA" | Species_PSZ != "POSE_1020SA" | Species_PSZ != "POSE_0150SA") |> 
+  separate(Species_PSZ, into = c("Species", "PSZ"), sep = "_") |> 
+  arrange(-Population)|>
+ group_by(Species) |>
+  slice_head(n=5) |>
+  ungroup()
+  
+#create a csv of the cleaned data, so we don't have to run code each time
+#write_csv(year_24, "clean_data/year_24.csv")
+```
+
+## 25 cleaning
+```{r}
+full_post <- full_join(Post_25, Species_25, by = c('GlobalID' = 'ParentGlobalID'))
+
+
+'this code is to only select the seed collection column from one pre collection sheet which I am combining with the rest of the pre collection data we need' 
+Pre_25_Seeds_Small <- Pre_25_seeds |>
+  select('Are You Collecting Seeds on This Trip?', 'ParentGlobalID')
+full_pre <- full_join(Pre_25, Pre_25_Seeds_Small, by = c('GlobalID' = 'ParentGlobalID'))
+
+year_25 <- right_join(full_pre, full_post,by =c("Primary_Key_Hidden" = "Primary Key")) |>
+  rename("GlobalID" = 'GlobalID.x') |>
+  rename("YMD" = 'YMD.x') |>
+  rename("Primary Key" = 'Primary_Key_Hidden') |>
+  select('Primary Key', Date, Latitude, Longitude, Unit, Elevation, 'Provisional Seed Zone', Ecoregion, Recollection, GlobalID, 'Number of Plants Found', 'Collected Species', 'Other Species', 'Are You Collecting Seeds on This Trip?' ) |>
+  rename("Species" = 'Collected Species') |>
+  rename("PSZ" = 'Provisional Seed Zone') |>
+  rename( "Population" = 'Number of Plants Found') |>
+  rename("Seeds_Collected" = 'Are You Collecting Seeds on This Trip?') |>
+ filter(Species == "POSE" | Species == "PEWH" | Species == 'ERSP4'| Species == 'ACLE9'| Species == 'ANGE'| Species == 'HEPU3'| Species == 'NAVI4'| Species == 'POSE') |> 
+  unite('Species_Ecoregion', Species, Ecoregion) |>
+   filter( Species_Ecoregion == "ERSP4_MR" | Species_Ecoregion == "ACLE9_MR" | Species_Ecoregion == "ANGE_HP" | Species_Ecoregion == "HEPU3_SR"  | Species_Ecoregion ==  "POSE_SR" | Species_Ecoregion == "NAVI4_NG" | Species_Ecoregion == "ERSP4_MR") |> 
+  separate(Species_Ecoregion, into = c("Species", "Ecoregion"), sep= "_") |> 
+  arrange(-Population) |> 
+  group_by(Species) |>
+  slice_head( n = 5) |> 
+  ungroup()
+  
+#error code: Join columns in `x` must be present in the data.Problem with `Primary_Key_Hidden`.
+
+
+#create a csv of the cleaned data, so we don't have to run code each time
+#write_csv(year_25, "clean_data/year_25.csv")
+```
+## Merging the Datasets 
+```{r}
+## Making all column data types match up 
+year_24$Date <-  as.character(year_24$Date)
+all_years <- bind_rows(year_23,year_24,year_25)
+```
+
+**Notes: We don't really need the recollection column for the model or anything**
+
+```{r}

@@ -1,0 +1,84 @@
+---
+title: "Growing Degree Days Model"
+author: "Megan Hoover, Chippy, Andrew"
+date: "2026-02-11"
+output: html_document
+---
+
+# We will clean field data for plants found in the U.S. National Forest Service Area territory in 
+
+Notes on common syntax within Rmd:
+- If you want space between words or code chunks, write <br>
+- If you want bold words/ headings use double stars **whateverwords**
+
+*For Pushing work from Rstudio to repository in terminal: 5 steps*
+- git pull
+- save script
+- git add .
+- git commit -m "lil note to look back at or updates made to code"
+- git push
+
+*For Pulling work:*
+- Click the Git tab, then click on pull
+
+*Having conflict Merges?*
+1. click on git tab, then select diff
+2. Look for conflicts:
+<<<<<<< HEAD
+your version of text / code
+=======
+
+your teammate’s version of text / code
+`>>>>>>> origin/main
+
+3. Go back to git tab and leave the review changes you were just in from the diff. Right click on the rmd file that is staged, click open file
+4. Delete those symbols in step 2. This allows for both changes from group members to stay, but it does it in order of who pushed first. 
+
+**OR if needed to pull before commiting changes:**
+git pull --rebase origin main
+This will:
+
+Download what's on GitHub
+
+Place your new commit on top of it
+
+Avoid a messy merge commit
+
+Then push again:
+
+git push
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+Load Libraries:
+```{r}
+library(tidyverse)
+library(sf)
+```
+<br>
+
+**Load field and spatial Data** example code given
+```{r}
+plants23<-read_csv("Data/name_of_file.csv") 
+plants24<-read_csv("Data/name_of_file.csv") 
+
+spatial<--read_csv("Data/name_of_file.csv")
+
+#check structure/ what format data is in
+str(name of df)
+
+```
+
+
+**Join the files**
+
+inner join: Only columns with matching values in both data sets are kept in the result. May need to change column names.
+```{r}
+#example
+plants_joined<- df1 %>% 
+  inner_join(df2 %>% select(col1, col4)) #joining on named columns, can have several 
+```
+
