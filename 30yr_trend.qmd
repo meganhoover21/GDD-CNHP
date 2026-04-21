@@ -9,7 +9,7 @@ editor: visual
 Organization: CNHP
 Affiliates: Megan Hoover, Andrew Zimbelman, Chippy Marx
 
-We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. We are comparing 1990-2020 monthly precipitation and temperature trends, to 2026 trends. 
+We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. We are comparing 1990-2020 monthly precipitation and temperature trends to 2026 trends. 
 
 ```{r}
 #| include: false #prevents code and output from showing
@@ -70,26 +70,31 @@ dat1<- dat %>%
     .groups = "drop") %>%
   mutate(month = as.integer(month))
 
-#tring anonamlies instead of raw temps
+#trying anomlies instead of raw temps. shows difference b/w raw temp and mean temperature per month.
 dat_anom <- dat1 %>%
   group_by(species, Latitude, Longitude, month) %>%
   mutate(temp_anom = temp - mean(temp, na.rm = TRUE)) %>%
   ungroup()
+  
+tmap_mode("view")
+```
 
-#collapsed species data for avg temp per species per month per year. Can do this b/c same eco region for all species
+
+**Pixelated heat map of the 30 year temperature trends compared to 2026**
+
+There are only climate data on 6 of the 8 plant species we were interested in.
+```{r}
+#| include: false
+#collapsed species data for avg temp per species per month per year. Can do this b/c same eco region for all species. This is more simple and easier to plot
 dat_region <- dat1 %>%
   group_by(species, month, year) %>%
   summarise(
     temp = mean(temp, na.rm = TRUE),
     .groups = "drop")
-#same thing but for precip
-dat_region <- dat1 %>%
-  group_by(species, month, year) %>%
-  summarise(
-    precip = mean(precip, na.rm = TRUE),
-    .groups = "drop")
+```
 
-#there are only climate data on 6 of the 8 plant species
+
+```{r}
 ggplot(dat_region, aes(year, factor(month), fill = temp)) +
   geom_tile() +
   facet_wrap(~ species) +
@@ -100,7 +105,21 @@ ggplot(dat_region, aes(year, factor(month), fill = temp)) +
     x = "Year",
     y = "Month",
     fill = "Temp(°F)")
+```
 
+
+
+**Pixelated precipitation map of the 30 year trends compared to 2026**
+```{r}
+#| include: false
+dat_region <- dat1 %>%
+  group_by(species, month, year) %>%
+  summarise(
+    precip = mean(precip, na.rm = TRUE),
+    .groups = "drop")
+```
+
+```{r}
 ggplot(dat_region, aes(year, factor(month), fill = precip)) +
   geom_tile() +
   facet_wrap(~ species) +
@@ -112,11 +131,10 @@ ggplot(dat_region, aes(year, factor(month), fill = precip)) +
     y = "Month",
     fill = "Precip(in)")
   
-  
-tmap_mode("view")
-
-
 ```
+
+
+
 
 ```{r}
 #building a shiny ap that is interactive
