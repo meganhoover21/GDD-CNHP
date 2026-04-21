@@ -9,7 +9,7 @@ editor: visual
 Organization: CNHP
 Affiliates: Megan Hoover, Andrew Zimbelman, Chippy Marx
 
-We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. 
+We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. We are comparing 1990-2020 monthly precipitation and temperature trends, to 2026 trends. 
 
 ```{r}
 #| include: false #prevents code and output from showing
@@ -18,6 +18,11 @@ library(tidyverse)
 library(ggplot2)
 library(leaflet)
 library(plotly)
+library(gganimate)
+library(leaflet)
+library(tmap)
+library(FNN)
+library(shiny)
 ```
  
 ```{r}
@@ -33,13 +38,164 @@ m2 <- m2 %>% filter(!is.na("tmean_F")) %>%
   filter(!is.na(ppt_in))
 m1 <- m1 %>% filter(!is.na("tmean_F")) %>% 
   filter(!is.na(ppt_in))
+m3<-read_csv("raw_data/all_prismsp_monthly_temp_precip_2026v2.csv") %>%
+  rename(species=Name)
 
-dat<-bind_rows(m1,m2)
-
+#bind all data into one
+dat<-bind_rows(m1,m2,m3)
 
 ```
  
 
+```{r}
+#| include: false
+#changing date format and making seasons
+dat <- dat %>%
+  mutate(
+    Date = lubridate::ym(Date),
+    year = lubridate::year(Date),
+    month = lubridate::month(Date))#,
+   # season = case_when(
+   # month %in% c(12, 1, 2) ~ "winter",
+   # month %in% c(3, 4, 5) ~ "spring",
+   # month %in% c(6, 7, 8) ~ "summer",
+   # month %in% c(9, 10, 11) ~ "fall")) 
+
+#grouping by species, location, and year to compare trends
+dat1<- dat %>%
+  group_by(species, Latitude, Longitude, month,year) %>%
+  summarise(
+    temp = mean(tmean_F, na.rm = TRUE),
+    precip = sum(ppt_in, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(month = as.integer(month))
+
+#tring anonamlies instead of raw temps
+dat_anom <- dat1 %>%
+  group_by(species, Latitude, Longitude, month) %>%
+  mutate(temp_anom = temp - mean(temp, na.rm = TRUE)) %>%
+  ungroup()
+
+#collapsed species data for avg temp per species per month per year. Can do this b/c same eco region for all species
+dat_region <- dat1 %>%
+  group_by(species, month, year) %>%
+  summarise(
+    temp = mean(temp, na.rm = TRUE),
+    .groups = "drop")
+#same thing but for precip
+dat_region <- dat1 %>%
+  group_by(species, month, year) %>%
+  summarise(
+    precip = mean(precip, na.rm = TRUE),
+    .groups = "drop")
+
+#there are only climate data on 6 of the 8 plant species
+ggplot(dat_region, aes(year, factor(month), fill = temp)) +
+  geom_tile() +
+  facet_wrap(~ species) +
+  scale_fill_viridis_c(option="inferno") +
+  theme_minimal() +
+  labs(
+    title = "Mean Monthly Temperature Trends 1990-2020, 2026",
+    x = "Year",
+    y = "Month",
+    fill = "Temp(°F)")
+
+ggplot(dat_region, aes(year, factor(month), fill = precip)) +
+  geom_tile() +
+  facet_wrap(~ species) +
+  scale_fill_viridis_c(option= "turbo") +
+  theme_minimal() +
+  labs(
+    title = "Mean Monthly Precipitation Trends 1990-2020, 2026",
+    x = "Year",
+    y = "Month",
+    fill = "Precip(in)")
+  
+  
+tmap_mode("view")
+
+
+```
+
+```{r}
+#building a shiny ap that is interactive
+ui <- fluidPage(
+  leafletOutput("map", height = 600),
+  plotOutput("plot", height = 300)
+)
+
+server <- function(input, output, session) {
+
+  # ---------------- MAP ----------------
+  output$map <- renderLeaflet({
+
+    leaflet(dat) %>%
+      addTiles() %>%
+
+      # 🌱 species points (clickable)
+      addCircleMarkers(
+        lng = ~Longitude,
+        lat = ~Latitude,
+        radius = 5,
+        color = "darkgreen",
+        fillOpacity = 0.8,
+        layerId = ~species   # assumes species column exists
+      )
+  })
+
+  # ---------------- CLICK ----------------
+  observeEvent(input$map_marker_click, {
+
+    click <- input$map_marker_click
+
+    # 🌡 nearest climate pixel (same df!)
+    idx <- get.knnx(
+      dat[, c("Longitude", "Latitude")],
+      matrix(c(click$lng, click$lat), ncol = 2),
+      k = 1
+    )$nn.index
+
+    df <- dat[idx, ]
+
+    # collapse to time series
+    ts <- df %>%
+      group_by(year, season) %>%
+      summarise(
+        tmean = mean(tmean_F, na.rm = TRUE),
+        ppt   = mean(ppt_in, na.rm = TRUE),
+        gdd   = mean(GDD, na.rm = TRUE),
+        .groups = "drop"
+      )
+
+    # ---------------- PLOT ----------------
+    output$plot <- renderPlot({
+
+      ggplot(ts, aes(x = year)) +
+
+        geom_col(aes(y = tmean, fill = "Temp"), alpha = 0.6) +
+        geom_line(aes(y = ppt * 10, color = "Precip")) +
+        geom_line(aes(y = gdd, color = "GDD")) +
+
+        facet_wrap(~season) +
+
+        scale_fill_manual(values = c("Temp" = "firebrick")) +
+        scale_color_manual(values = c("Precip" = "steelblue",
+                                      "GDD" = "darkgreen")) +
+
+        theme_minimal() +
+        labs(
+          title = paste("Climate Trend:", click$id),
+          x = "Year",
+          y = "Value (scaled)"
+        )
+    })
+
+  })
+}
+
+shinyApp(ui, server)
+```
 
 
 
