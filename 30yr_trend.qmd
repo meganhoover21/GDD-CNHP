@@ -29,21 +29,25 @@ library(shiny)
 #| include: false
 setwd("C:/Users/samho/Desktop/CNHP/Growing_Degree_days/GDD_CNHP")
 #Load prism climate data csv files
-m1<- read_csv("raw_data/PRISM_ppt_tmean_monthly_199101_200501.csv")
+m1<- read_csv("raw_data/PRISM_ppt_tmean_monthly_199101_200501v3.csv")
 m1 <- m1 %>%
   rename(tmean_F = `tmean_ F`)
 m2<- read_csv(
-  "raw_data/PRISM_ppt_tmean_monthly200502_202001.csv")
+  "raw_data/PRISM_ppt_tmean_monthly200502_202001v3.csv")
 m2 <- m2 %>% filter(!is.na("tmean_F")) %>% 
   filter(!is.na(ppt_in))
 m1 <- m1 %>% filter(!is.na("tmean_F")) %>% 
   filter(!is.na(ppt_in))
-m3<-read_csv("raw_data/all_prismsp_monthly_temp_precip_2026v2.csv") %>%
-  rename(species=Name)
+m3<-read_csv("raw_data/all_prismsp_monthly_temp_precip_2026v3.csv") %>%
+  rename(species=Name,
+         Elevation_ft=`Elevation (ft)`,
+         ppt_in= `ppt (inches)`,
+         tmean_F=`tmean (degrees F)`) %>%
+  filter(!is.na(ppt_in))
 
 #bind all data into one
-dat<-bind_rows(m1,m2,m3)
-
+dat<-bind_rows(m1,m2,m3) %>%
+  filter(!is.na(species))
 ```
  
 
@@ -64,10 +68,10 @@ dat <- dat %>%
 #grouping by species, location, and year to compare trends
 dat1<- dat %>%
   group_by(species, Latitude, Longitude, month,year) %>%
-  summarise(
-    temp = mean(tmean_F, na.rm = TRUE),
-    precip = sum(ppt_in, na.rm = TRUE),
-    .groups = "drop") %>%
+ # summarise(
+  #  temp = mean(tmean_F, na.rm = TRUE),
+  #  precip = sum(ppt_in, na.rm = TRUE),
+  #  .groups = "drop") %>%
   mutate(month = as.integer(month))
 
 #trying anomlies instead of raw temps. shows difference b/w raw temp and mean temperature per month.
@@ -82,20 +86,19 @@ tmap_mode("view")
 
 **Pixelated heat map of the 30 year temperature trends compared to 2026**
 
-There are only climate data on 6 of the 8 plant species we were interested in.
 ```{r}
 #| include: false
 #collapsed species data for avg temp per species per month per year. Can do this b/c same eco region for all species. This is more simple and easier to plot
 dat_region <- dat1 %>%
-  group_by(species, month, year) %>%
-  summarise(
-    temp = mean(temp, na.rm = TRUE),
-    .groups = "drop")
+  group_by(species, month, year) #%>%
+ # summarise(
+  # temp = mean(tmean_F, na.rm = TRUE),
+  #  .groups = "drop")
 ```
 
 
 ```{r}
-ggplot(dat_region, aes(year, factor(month), fill = temp)) +
+ggplot(dat_region, aes(year, factor(month), fill = tmean_F)) +
   geom_tile() +
   facet_wrap(~ species) +
   scale_fill_viridis_c(option="inferno") +
@@ -113,17 +116,17 @@ ggplot(dat_region, aes(year, factor(month), fill = temp)) +
 ```{r}
 #| include: false
 dat_region <- dat1 %>%
-  group_by(species, month, year) %>%
-  summarise(
-    precip = mean(precip, na.rm = TRUE),
-    .groups = "drop")
+  group_by(species, month, year) #%>%
+ # summarise(
+    #precip = mean(precip, na.rm = TRUE),
+   # .groups = "drop")
 ```
 
 ```{r}
-ggplot(dat_region, aes(year, factor(month), fill = precip)) +
+ggplot(dat_region, aes(year, factor(month), fill = ppt_in)) +
   geom_tile() +
   facet_wrap(~ species) +
-  scale_fill_viridis_c(option= "turbo") +
+  scale_fill_viridis_c(option="mako", direction = -1) + #direction = -1 reverse palette
   theme_minimal() +
   labs(
     title = "Mean Monthly Precipitation Trends 1990-2020, 2026",
@@ -134,85 +137,33 @@ ggplot(dat_region, aes(year, factor(month), fill = precip)) +
 ```
 
 
+Now here is a map that shows where all the locations of the plant that we would like to collect on in 2026. The GDD days are shown with each species, to show how much more heat energy the plant has left until ready for harvest.
 
 
 ```{r}
-#building a shiny ap that is interactive
-ui <- fluidPage(
-  leafletOutput("map", height = 600),
-  plotOutput("plot", height = 300)
-)
+#| include: false
+#Read in the GDD and plant location csv and make into sf
+gdd<-read_csv("raw_data/latest_gdd_by_location.csv") %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
 
-server <- function(input, output, session) {
+#read in the states sf file from CO, NE, KS, WY
+states<-st_read("raw_data/states.shp")
+#check that they match
+st_crs(states) == st_crs(gdd)
+#project states to 4326
+states<- st_transform(states, 4326)
+```
+```{r}
+tmap_mode("view")  # for interactive map and static for non-interactive
 
-  # ---------------- MAP ----------------
-  output$map <- renderLeaflet({
-
-    leaflet(dat) %>%
-      addTiles() %>%
-
-      # 🌱 species points (clickable)
-      addCircleMarkers(
-        lng = ~Longitude,
-        lat = ~Latitude,
-        radius = 5,
-        color = "darkgreen",
-        fillOpacity = 0.8,
-        layerId = ~species   # assumes species column exists
-      )
-  })
-
-  # ---------------- CLICK ----------------
-  observeEvent(input$map_marker_click, {
-
-    click <- input$map_marker_click
-
-    # 🌡 nearest climate pixel (same df!)
-    idx <- get.knnx(
-      dat[, c("Longitude", "Latitude")],
-      matrix(c(click$lng, click$lat), ncol = 2),
-      k = 1
-    )$nn.index
-
-    df <- dat[idx, ]
-
-    # collapse to time series
-    ts <- df %>%
-      group_by(year, season) %>%
-      summarise(
-        tmean = mean(tmean_F, na.rm = TRUE),
-        ppt   = mean(ppt_in, na.rm = TRUE),
-        gdd   = mean(GDD, na.rm = TRUE),
-        .groups = "drop"
-      )
-
-    # ---------------- PLOT ----------------
-    output$plot <- renderPlot({
-
-      ggplot(ts, aes(x = year)) +
-
-        geom_col(aes(y = tmean, fill = "Temp"), alpha = 0.6) +
-        geom_line(aes(y = ppt * 10, color = "Precip")) +
-        geom_line(aes(y = gdd, color = "GDD")) +
-
-        facet_wrap(~season) +
-
-        scale_fill_manual(values = c("Temp" = "firebrick")) +
-        scale_color_manual(values = c("Precip" = "steelblue",
-                                      "GDD" = "darkgreen")) +
-
-        theme_minimal() +
-        labs(
-          title = paste("Climate Trend:", click$id),
-          x = "Year",
-          y = "Value (scaled)"
-        )
-    })
-
-  })
-}
-
-shinyApp(ui, server)
+#tm<-
+ # tm_shape(states)+
+ # tm_polygons(col="grey")+
+tm_shape(gdd)+
+  tm_dots(col = "species_code",
+          size = 0.5,
+          alpha = 1.0,
+          popup.vars = c("species_code", "med_total_gdd"))
 ```
 
 
