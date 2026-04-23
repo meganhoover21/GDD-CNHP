@@ -4,34 +4,37 @@ author: "Megan Hoover"
 format: html
 editor: visual
 ---
+```{r}
+#| echo: false
+#| fig-align: center
+#| out-width: "100%"
+knitr::include_graphics('arapaho_roos_nps.jpg')
+```
 
-# 30 Year Climate Trends in CO, NE, SD, and WY <br>
+# 30 Year Climate Trends in CO, NE, SD, and WY 
+
 Organization: CNHP
 Affiliates: Megan Hoover, Andrew Zimbelman, Chippy Marx
 
-We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. We are comparing 1990-2020 monthly precipitation and temperature trends to 2026 trends. 
+We downloaded monthly and daily climate data from https://prism.oregonstate.edu/ based off of the species and locations we provided. We are comparing 1991-2020 monthly precipitation and temperature trends to 2026 trends. These species are located in the Rocky Mountain eco region.
 
-```{r}
-#| include: false #prevents code and output from showing
+```{r, echo=FALSE, include=FALSE}
+ #prevents code and output from showing
 library(sf)
 library(tidyverse)
 library(ggplot2)
 library(leaflet)
 library(plotly)
-library(gganimate)
 library(leaflet)
 library(tmap)
-library(FNN)
-library(shiny)
 ```
  
-```{r}
-#| include: false
-setwd("C:/Users/samho/Desktop/CNHP/Growing_Degree_days/GDD_CNHP")
+```{r, echo= FALSE, include=FALSE}
+
 #Load prism climate data csv files
 m1<- read_csv("raw_data/PRISM_ppt_tmean_monthly_199101_200501v3.csv")
-m1 <- m1 %>%
-  rename(tmean_F = `tmean_ F`)
+#m1 <- m1 %>%
+  #rename(tmean_F = `tmean_ F`)
 m2<- read_csv(
   "raw_data/PRISM_ppt_tmean_monthly200502_202001v3.csv")
 m2 <- m2 %>% filter(!is.na("tmean_F")) %>% 
@@ -51,8 +54,7 @@ dat<-bind_rows(m1,m2,m3) %>%
 ```
  
 
-```{r}
-#| include: false
+```{r, echo=FALSE, include=FALSE}
 #changing date format and making seasons
 dat <- dat %>%
   mutate(
@@ -91,8 +93,9 @@ tmap_mode("view")
 
 **Pixelated heat map of the 30 year temperature trends compared to 2026**
 
-```{r}
-#| include: false
+This shows the raw values for each month of each year.
+
+```{r, echo=FALSE, include=FALSE}
 #collapsed species data for avg temp per species per month per year. Can do this b/c same eco region for all species. This is more simple and easier to plot
 dat_region <- dat1 %>%
   group_by(species, month, year) #%>%
@@ -102,14 +105,14 @@ dat_region <- dat1 %>%
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 ggplot(dat_region, aes(year, factor(month), fill = tmean_F)) +
   geom_tile() +
   facet_wrap(~ species) +
   scale_fill_viridis_c(option="inferno") +
   theme_minimal() +
   labs(
-    title = "Mean Monthly Temperature Trends 1990-2020, 2026",
+    title = "Mean Monthly Temperature Trends 1991-2020, 2026",
     x = "Year",
     y = "Month",
     fill = "Temp(°F)")
@@ -118,7 +121,9 @@ ggplot(dat_region, aes(year, factor(month), fill = tmean_F)) +
 **Pixelated heat map of the temperature anomaly across species from 1991-2020**
 
 Anomalies are compared to a baseline value and they remove seasonality so you can compare across time more meaningfully.
-```{r}
+
+Blue values indicate lower temps compared to the month of the previous year and red values indicate that the month was warmer than the previous years.
+```{r, echo= FALSE}
 #plot temp anomaly. Good to see for changes across years
 ggplot(dat_anom, aes(x = year, y = factor(month), fill = temp_anom)) +
   geom_tile() +
@@ -133,8 +138,9 @@ ggplot(dat_anom, aes(x = year, y = factor(month), fill = temp_anom)) +
 
 
 **Pixelated precipitation map of the 30 year trends compared to 2026**
-```{r}
-#| include: false
+
+This shows the raw mean precipitation values month by month per year.
+```{r, echo =FALSE, include=FALSE}
 dat_region <- dat1 %>%
   group_by(species, month, year) #%>%
  # summarise(
@@ -151,14 +157,14 @@ dat_anom <- dat1 %>%
   ungroup()
 ```
 
-```{r}
+```{r, echo=FALSE}
 ggplot(dat_region, aes(year, factor(month), fill = ppt_in)) +
   geom_tile() +
   facet_wrap(~ species) +
   scale_fill_viridis_c(option="mako", direction = -1) + #direction = -1 reverse palette
   theme_minimal() +
   labs(
-    title = "Mean Monthly Precipitation Trends 1990-2020, 2026",
+    title = "Mean Monthly Precipitation Trends 1991-2020, 2026",
     x = "Year",
     y = "Month",
     fill = "Precip(in)")
@@ -166,7 +172,9 @@ ggplot(dat_region, aes(year, factor(month), fill = ppt_in)) +
 ```
 **Pixelated Precipitation anomaly map of the plant species from 1991-2020**
 
-```{r}
+This map shows the difference in precipitation of each month compared to each year. Blue values indicate that there was more precipitation, while red values indicate that there was lower precipitation. 
+
+```{r, echo=FALSE}
 #plot temp anomaly. Good to see for changes across years
 ggplot(dat_anom, aes(x = year, y = factor(month), fill = p_anom)) +geom_tile() +
   facet_wrap(~ species) +
@@ -180,10 +188,7 @@ ggplot(dat_anom, aes(x = year, y = factor(month), fill = p_anom)) +geom_tile() +
 
 
 Now here is a map that shows where all the locations of the plant that we would like to collect on in 2026. The GDD days are shown with each species, to show how much more heat energy the plant has left until ready for harvest.
-
-
-```{r}
-#| include: false
+```{r, echo=FALSE, include=FALSE}
 #Read in the GDD and plant location csv and make into sf
 gdd<-read_csv("clean_data/latest_gdd_by_location2.csv") %>%
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
@@ -201,7 +206,8 @@ states<- st_transform(states, 4326)
 
 
 **Interactive map of plant species of interest and their GDD. Only 6 species are shown**
-```{r}
+
+```{r, echo=FALSE, message=FALSE}
 tmap_mode("view")  # for interactive map and static for non-interactive
 
 #tm<-
@@ -215,7 +221,3 @@ tm_shape(gdd)+
 ```
 
 
-
-
-
-The `echo: false` option disables the printing of code (only output is displayed).
